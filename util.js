@@ -97,3 +97,12 @@ function _typeCheck(params, expect, name) {
 		throw new Error(`params typeof is ${typeof params}; the params of "${name}" must be a ${expect}!`);
 	}
 }
+
+export function imgWatch(scroll, imgs, init = true) {
+	let arr = init ? Array.from(document.getElementsByTagName('img')) : imgs;
+	setTimeout(() => {
+		let srpimg = arr.filter(item => !item.complete);
+		scroll.refresh();
+		if (srpimg.length > 0) imgWatch(scroll, srpimg, false);
+	}, 200);
+}

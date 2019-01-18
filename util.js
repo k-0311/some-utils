@@ -1,4 +1,3 @@
-
 export function setCookie(name, value, days) {
 	var d = new Date;
 	d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
@@ -15,21 +14,25 @@ export function delCookie(name) {
 }
 
 export function setSessionStorage(name, value) {
-	sessionStorage.setItem(name, JSON.stringify(value))
+	let v = value ? JSON.stringify(value) : '';
+	sessionStorage.setItem(name, v)
 }
 
 export function getSessionStorage(name, type) {
-	let v = JSON.parse(sessionStorage.getItem(name));
+	let v = sessionStorage.getItem(name);
 	let empty;
 	switch (type) {
 		case 'String':
 			empty = '';
 			break;
+		case 'Array':
+			empty = [];
+			break;
 		default:
 			empty = {}
 			break;
 	}
-	return v ? v : empty;
+	return v ? JSON.parse(v) : empty;
 }
 
 export function delSessionStorage(name) {
@@ -37,23 +40,60 @@ export function delSessionStorage(name) {
 }
 
 export function setLocalStorage(name, value) {
-	localStorage.setItem(name, JSON.stringify(value))
+	let v = value ? JSON.stringify(value) : '';
+	localStorage.setItem(name, v)
 }
 
 export function getLocalStorage(name, type) {
-	let v = JSON.parse(localStorage.getItem(name));
+	let v = localStorage.getItem(name);
 	let empty;
 	switch (type) {
 		case 'String':
 			empty = '';
 			break;
+		case 'Array':
+			empty = [];
+			break;
 		default:
 			empty = {}
 			break;
 	}
-	return v ? v : empty;
+	return v ? JSON.parse(v) : empty;
 }
 
 export function delLocalStorage(name) {
 	localStorage.removeItem(name)
+}
+
+export function mapUrl(url) {
+	_typeCheck(url, 'string', 'mapUrl');
+	if (!url.includes("?")) {
+		return { url, query: {} };
+	}
+	let { 0: path, 1: params } = url.split("?");
+	let arr = params.split("&");
+	let query = arr.reduce((obj, item) => {
+		let { 0: key, 1: val } = item.split("=");
+		obj[key] = val;
+		return obj;
+	}, {});
+	return { url: path, query };
+}
+
+export const mapQuery = (data) => {
+	_typeCheck(data, 'object', 'mapQuery');
+	let str = "";
+	Object.keys(data).forEach(key => {
+		str += `${key}=${data[key]}&`;
+	});
+	return str.slice(0, -1);
+}
+
+function _typeCheck(params, expect, name) {
+	if (!params) {
+		throw new Error(`the params of ${name} is undefined!`);
+	}
+	if (typeof params != expect) {
+		throw new Error(`params typeof is ${typeof params}; the params of "${name}" must be a ${expect}!`);
+	}
 }

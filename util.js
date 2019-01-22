@@ -1,37 +1,31 @@
 export function setCookie(name, value, days) {
 	var d = new Date;
 	d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
-	window.document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
+	window.document.cookie = `${name}=${value};path=/;expires=${d.toGMTString()}`
 }
 
 export function getCookie(name) {
-	var v = window.document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+	var v = window.document.cookie.match(`(^|;) ?${name}=([^;]*)(;|$)`);
 	return v ? v[2] : null;
 }
 
 export function delCookie(name) {
-	setCookie(name, '', -1);
+	setCookie(name, "", -1);
 }
 
 export function setSessionStorage(name, value) {
-	let v = value ? JSON.stringify(value) : '';
+	let v = value ? JSON.stringify(value) : "";
 	sessionStorage.setItem(name, v)
 }
 
-export function getSessionStorage(name, type) {
-	let v = sessionStorage.getItem(name);
-	let empty;
-	switch (type) {
-		case 'String':
-			empty = '';
-			break;
-		case 'Array':
-			empty = [];
-			break;
-		default:
-			empty = {}
-			break;
+export function getSessionStorage(name, type = "Object") {
+	let types = {
+		String: "",
+		Array: [],
+		Object: {}
 	}
+	let v = sessionStorage.getItem(name);
+	let empty = types[type];
 	return v ? JSON.parse(v) : empty;
 }
 
@@ -40,24 +34,18 @@ export function delSessionStorage(name) {
 }
 
 export function setLocalStorage(name, value) {
-	let v = value ? JSON.stringify(value) : '';
+	let v = value ? JSON.stringify(value) : "";
 	localStorage.setItem(name, v)
 }
 
-export function getLocalStorage(name, type) {
-	let v = localStorage.getItem(name);
-	let empty;
-	switch (type) {
-		case 'String':
-			empty = '';
-			break;
-		case 'Array':
-			empty = [];
-			break;
-		default:
-			empty = {}
-			break;
+export function getLocalStorage(name, type = "Object") {
+	let types = {
+		String: "",
+		Array: [],
+		Object: {}
 	}
+	let v = localStorage.getItem(name);
+	let empty = types[type];
 	return v ? JSON.parse(v) : empty;
 }
 
@@ -66,7 +54,7 @@ export function delLocalStorage(name) {
 }
 
 export function mapUrl(url) {
-	_typeCheck(url, 'string', 'mapUrl');
+	_typeCheck(url, "string", "mapUrl");
 	if (!url.includes("?")) {
 		return { url, query: {} };
 	}
@@ -81,7 +69,7 @@ export function mapUrl(url) {
 }
 
 export const mapQuery = (data) => {
-	_typeCheck(data, 'object', 'mapQuery');
+	_typeCheck(data, "object", "mapQuery");
 	let str = "";
 	Object.keys(data).forEach(key => {
 		str += `${key}=${data[key]}&`;
@@ -99,7 +87,7 @@ function _typeCheck(params, expect, name) {
 }
 
 export function imgWatch(scroll, imgs, init = true) {
-	let arr = init ? Array.from(document.getElementsByTagName('img')) : imgs;
+	let arr = init ? Array.from(document.getElementsByTagName("img")) : imgs;
 	setTimeout(() => {
 		let srpimg = arr.filter(item => !item.complete);
 		scroll.refresh();

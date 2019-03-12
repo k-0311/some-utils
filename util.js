@@ -1,3 +1,9 @@
+const EMPTY_TYPE = {
+	String: "",
+	Array: [],
+	Object: {}
+}
+
 export function setCookie(name, value, days) {
 	var d = new Date;
 	d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
@@ -19,14 +25,8 @@ export function setSessionStorage(name, value) {
 }
 
 export function getSessionStorage(name, type = "Object") {
-	let types = {
-		String: "",
-		Array: [],
-		Object: {}
-	}
 	let v = sessionStorage.getItem(name);
-	let empty = types[type];
-	return v ? JSON.parse(v) : empty;
+	return v ? JSON.parse(v) : EMPTY_TYPE[type];
 }
 
 export function delSessionStorage(name) {
@@ -39,22 +39,32 @@ export function setLocalStorage(name, value) {
 }
 
 export function getLocalStorage(name, type = "Object") {
-	let types = {
-		String: "",
-		Array: [],
-		Object: {}
-	}
 	let v = localStorage.getItem(name);
-	let empty = types[type];
-	return v ? JSON.parse(v) : empty;
+	return v ? JSON.parse(v) : EMPTY_TYPE[type];
 }
 
 export function delLocalStorage(name) {
 	localStorage.removeItem(name)
 }
 
+export const browser = {
+	uc() { return navigator.userAgent.includes("UCBrowser") },
+	wx() { return navigator.userAgent.toLowerCase().match(/MicroMessenger/i) == "micromessenger" }
+}
+
+const _mobileSystem = () => {
+	const _isMob = () => {
+		return /(nokia|iphone|android|ipad|motorola|^mot\-|softbank|foma|docomo|kddi|up\.browser|up\.link|htc|dopod|blazer|netfront|helio|hosin|huawei|novarra|CoolPad|webos|techfaith|palmsource|blackberry|alcatel|amoi|ktouch|nexian|samsung|^sam\-|s[cg]h|^lge|ericsson|philips|sagem|wellcom|bunjalloo|maui|symbian|smartphone|midp|wap|phone|windows ce|iemobile|^spice|^bird|^zte\-|longcos|pantech|gionee|^sie\-|portalmmm|jig\s browser|hiptop|^ucweb|^benq|haier|^lct|opera\s*mobi|opera\*mini|320x320|240x320|176x220)/i.test(navigator.userAgent)
+	}
+	return {
+		ios() { return _isMob() && /(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent) },
+		adro() { return _isMob() && /(android|Adr)/i.test(navigator.userAgent) }
+	}
+}
+export const mobileSystem = _mobileSystem()
+
 export function mapUrl(url) {
-	_typeCheck(url, "string", "mapUrl");
+	_typeCheck(url, "string", "mapUrl")
 	if (!url.includes("?")) {
 		return { url, query: {} };
 	}
@@ -69,7 +79,7 @@ export function mapUrl(url) {
 }
 
 export const mapQuery = (data) => {
-	_typeCheck(data, "object", "mapQuery");
+	_typeCheck(data, "object", "mapQuery")
 	let str = "";
 	Object.keys(data).forEach(key => {
 		str += `${key}=${data[key]}&`;
@@ -86,11 +96,12 @@ function _typeCheck(params, expect, name) {
 	}
 }
 
-export function imgWatch(scroll, imgs, init = true) {
-	let arr = init ? Array.from(document.getElementsByTagName("img")) : imgs;
-	setTimeout(() => {
-		let srpimg = arr.filter(item => !item.complete);
-		scroll.refresh();
-		if (srpimg.length > 0) imgWatch(scroll, srpimg, false);
-	}, 200);
-}
+export function randomNums(len, dict, str = "") {
+	for (var i = 0, rs = ""; i < len; i++)
+		rs += dict.charAt(Math.floor(Math.random() * 100000000) % dict.length);
+	return rs += str;
+};
+
+export function randomPhone() {
+	return [1, randomNums(2, "3458"), "****", randomNums(4, "0123456789")].join("");
+};

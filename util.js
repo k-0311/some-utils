@@ -39,7 +39,7 @@ const Cookie = {
 	set (name, value, days) {
 		var d = new Date()
 		d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days)
-		window.document.cookie = `${name}=${value};path=/;expires=${d.toGMTString()}`
+		window.document.cookie = `${name}=${value}path=/;expires=${d.toGMTString()}`
 	},
 	get (name) {
 		var v = window.document.cookie.match(`(^|;) ?${name}=([^;]*)(;|$)`)
@@ -74,7 +74,7 @@ export const mobileSystem = _mobileSystem()
 export function mapUrl (url) {
 	_typeCheck(url, "string", "mapUrl")
 	if (!url.includes("?")) {
-		return { url, query: {} };
+		return { url, query: {} }
 	}
 	let { 0: path, 1: params } = url.split("?");
 	let arr = params.split("&");
@@ -83,7 +83,7 @@ export function mapUrl (url) {
 		obj[key] = val;
 		return obj;
 	}, {});
-	return { url: path, query };
+	return { url: path, query }
 }
 
 export const mapQuery = (data) => {
@@ -100,7 +100,7 @@ function _typeCheck (params, expect, name) {
 		throw new Error(`the params of ${name} is undefined!`);
 	}
 	if (typeof params != expect) {
-		throw new Error(`params typeof is ${typeof params}; the params of "${name}" must be a ${expect}!`);
+		throw new Error(`params typeof is ${typeof params} the params of "${name}" must be a ${expect}!`);
 	}
 }
 
@@ -108,8 +108,14 @@ export function randomNums (len, dict, str = "") {
 	for (var i = 0, rs = ""; i < len; i++)
 		rs += dict.charAt(Math.floor(Math.random() * 100000000) % dict.length);
 	return rs += str;
-};
+}
 
 export function randomPhone () {
 	return [1, randomNums(2, "3458"), "****", randomNums(4, "0123456789")].join("");
-};
+}
+
+export function createUniqueString () {
+	const timestamp = +new Date() + ''
+	const randomNum = parseInt((1 + Math.random()) * 65536) + ''
+	return (+(randomNum + timestamp)).toString(32)
+}

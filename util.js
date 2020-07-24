@@ -66,7 +66,7 @@ const _mobileSystem = () => {
 	}
 	return {
 		ios () { return _isMob() && /(iPhone|iPad|iPod|iOS)/i.test(navigator.userAgent) },
-		adro () { return _isMob() && /(android|Adr)/i.test(navigator.userAgent) }
+		adr () { return _isMob() && /(android|Adr)/i.test(navigator.userAgent) }
 	}
 }
 export const mobileSystem = _mobileSystem()
@@ -119,3 +119,23 @@ export function createUniqueString () {
 	const randomNum = parseInt((1 + Math.random()) * 65536) + ''
 	return (+(randomNum + timestamp)).toString(32)
 }
+
+export const isEmail = (email) => {
+	return /^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$/.test(email)
+}
+
+export const isMobile = (mobile) => {
+	return /^1\d{10}$/.test(mobile)
+}
+
+export const isURL = (url) => {
+	return /^\w+:\/\/\S+$/.test(url)
+}
+
+export const isDate = raw => !isNaN(+new Date(raw))
+
+export const isBrowserVendor = (name, UA = globalThis.navigator?.userAgent || '') =>
+	UA.toLowerCase().includes(name);
+
+export const isRobot = (UA = globalThis.navigator?.userAgent || '') =>
+	/bot|spider|crawler/i.test(UA);

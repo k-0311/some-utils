@@ -139,3 +139,7 @@ export const isBrowserVendor = (name, UA = globalThis.navigator?.userAgent || ''
 
 export const isRobot = (UA = globalThis.navigator?.userAgent || '') =>
 	/bot|spider|crawler/i.test(UA);
+
+String.prototype.len = function() { 
+    return this.replace(/[^\x00-\xff]/g, 'xx').length; 
+}

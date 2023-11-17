@@ -143,3 +143,71 @@ export const isRobot = (UA = globalThis.navigator?.userAgent || '') =>
 String.prototype.len = function() { 
     return this.replace(/[^\x00-\xff]/g, 'xx').length; 
 }
+
+const formatData = (data, keys = []) => {
+  if (!isObject(data) || !Array.isArray(keys)) return data
+  const _keys = [...new Set(defaultPriceKeys.concat(keys))]
+  Object.keys(data).forEach(key => {
+    if (isObject(data[key])) {
+      data[key] = formatData(data[key], keys)
+    } else if (Array.isArray(data[key])) {
+      data[key] = data[key].map(item => formatData(item, keys))
+    } else if (_keys.includes(key)) {
+      data[`${key}_fmt`] = n(data[key]).div(100).toFixed(2)
+    }
+  })
+  return data
+}
+
+const throttle = (fn, threshhold = 5000, execLast = true) => {// 设置默认间隔时间
+  let timeout = null
+  let start = new Date() - 0;
+  return function () {
+    const curr = new Date() - 0;
+    clearTimeout(timeout)
+    if (curr - start >= threshhold) {
+      fn.apply(this, arguments)
+      start = curr
+    } else if (execLast) {
+      //让方法在脱离事件后也能执行一次
+      timeout = setTimeout(() => {
+        fn.apply(this, arguments)
+      }, threshhold);
+    }
+  }
+}
+
+const getFileExtname = (url) => {
+  return (url.lastIndexOf('.') > -1 && url.substring(url.lastIndexOf('.') + 1)) || url
+}
+
+const original = {
+  Role: {
+    Admin: 1,
+    User: 2
+  }
+}
+
+const objectFlat = (obj) => {
+  const power = {}
+  const deepFlat = (arg, oKey) => {
+    if (arg && typeof arg === 'object') {
+      Object.keys(arg).forEach(key => {
+        deepFlat(arg[key], oKey ? `${oKey}.${key}` : key)
+      })
+    } else {
+      power[oKey] = arg
+    }
+  }
+  deepFlat(obj)
+  return power
+}
+
+const list = objectFlat(original)
+const enums = (name) => {
+  if (!(name in list)) {
+    console.error(`${name} 属性不存在，请检查`)
+  }
+  return list[name]
+}
+
